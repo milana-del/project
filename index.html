@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chase Atlantic - Official Fan Site</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Slick CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/gallery.css">
+    <link rel="stylesheet" href="css/modal.css">
+    <link rel="stylesheet" href="css/player.css">
+</head>
+<body>
+    <!-- Video Header -->
+    <header class="video-header">
+        <div class="video-background">
+            <video autoplay muted loop id="headerVideo">
+                <source src="assets/Chase-Atlantic.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="video-overlay"></div>
+        </div>
+        
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <img src="assets/logon.png" alt="Chase Atlantic Logo" class="logo">
+                    <span class="logo-text">CHASE ATLANTIC</span>
+                </div>
+                
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="#home" class="nav-link">Главная</a></li>
+                    <li class="nav-item dropdown">
+                        <a href="#music" class="nav-link">Музыка</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#albums" class="dropdown-link">Альбомы</a></li>
+                            <li><a href="#singles" class="dropdown-link">Синглы</a></li>
+                            <li><a href="#tours" class="dropdown-link">Концерты</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a href="#gallery" class="nav-link">Галерея</a></li>
+                    <li class="nav-item"><a href="#discography" class="nav-link">Дискография</a></li>
+                    <li class="nav-item"><a href="#contact" class="nav-link">Контакты</a></li>
+                    <li class="nav-item">
+                        <button class="nav-btn" id="contact-btn">Связь с нами</button>
+                    </li>
+                </ul>
+                
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </nav>
+
+        <div class="hero-content">
+            <h1 class="hero-title">CHASE ATLANTIC</h1>
+            <p class="hero-subtitle">Официальный фанатский сайт</p>
+            <button class="cta-button" id="hero-contact-btn">Связаться с нами</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- About Section -->
+        <section id="home" class="section about-section">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <h2 class="section-title">О группе</h2>
+                        <p class="about-text">
+                            Chase Atlantic — австралийская музыкальная группа, образованная в 2014 году. 
+                            Коллектив состоит из трёх участников: Митча Кейва, Клинта Кейва и Кристиана Энтони.
+                        </p>
+                        <p class="about-text">
+                            Их музыка сочетает элементы R&B, поп-музыки и рока, создавая уникальный звук, 
+                            который покорил миллионы слушателей по всему миру.
+                        </p>
+                        <div class="stats">
+                            <div class="stat-item">
+                                <span class="stat-number">5M+</span>
+                                <span class="stat-label">месячных слушателей</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">500M+</span>
+                                <span class="stat-label">прослушиваний</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="about-image">
+                            <img src="assets/band-photo1.png" alt="Chase Atlantic Band" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Music Player Section -->
+<section id="music" class="section player-section dark-section">
+    <div class="container">
+        <h2 class="section-title text-center">Популярные треки</h2>
+        <div class="music-player">
+            <div class="player-header">
+                <div class="player-info">
+                    <div class="album-art">
+                        <img src="assets/album-cover.png" alt="Chase Atlantic Album" id="currentAlbumArt">
+                        <div class="vinyl-overlay"></div>
+                    </div>
+                    <div class="track-info">
+                        <h3 id="currentTrack">Swim</h3>
+                        <p id="currentArtist">Chase Atlantic</p>
+                        <div class="track-progress">
+                            <span id="currentTime">0:00</span>
+                            <div class="progress-bar">
+                                <div class="progress" id="progress"></div>
+                                <input type="range" id="progressSlider" class="progress-slider" min="0" max="100" value="0">
+                            </div>
+                            <span id="duration">0:00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="player-controls">
+                    <button class="control-btn" id="shuffleBtn" title="Перемешать">
+                        <svg width="16" height="16" viewBox="0 0 16 16">
+                            <path d="M13.151.922a.75.75 0 1 0-1.06 1.06L13.109 3H11.16a3.75 3.75 0 0 0-2.873 1.34l-6.173 7.356A2.25 2.25 0 0 1 2.088 12H.75a.75.75 0 0 0 0 1.5h1.338a3.75 3.75 0 0 0 2.873-1.34l6.173-7.356a2.25 2.25 0 0 1 1.724-.804h1.949l-1.017 1.018a.75.75 0 0 0 1.06 1.06l2.25-2.25a.75.75 0 0 0 0-1.06l-2.25-2.25Z"/>
+                            <path d="M.75 4a.75.75 0 0 0 0 1.5h1.338a2.25 2.25 0 0 1 1.724.804l6.173 7.356a3.75 3.75 0 0 0 2.873 1.34h1.949l-1.017-1.018a.75.75 0 1 1 1.06-1.06l2.25 2.25a.75.75 0 0 1 0 1.06l-2.25 2.25a.75.75 0 1 1-1.06-1.06L13.109 13H11.16a3.75 3.75 0 0 1-2.873-1.34L2.088 4.5H.75Z"/>
+                        </svg>
+                    </button>
+                    <button class="control-btn" id="prevBtn" title="Предыдущий">
+                        <svg width="16" height="16" viewBox="0 0 16 16">
+                            <path d="M3.3 1a.7.7 0 0 1 .7.7v5.15l9.95-5.744a.7.7 0 0 1 1.05.606v12.576a.7.7 0 0 1-1.05.607L4 9.149V14.3a.7.7 0 0 1-.7.7H1.7a.7.7 0 0 1-.7-.7V1.7a.7.7 0 0 1 .7-.7h1.6z"/>
+                        </svg>
+                    </button>
+                    <button class="control-btn play-btn" id="playBtn" title="Воспроизвести">
+                        <svg class="play-icon" width="16" height="16" viewBox="0 0 16 16">
+                            <path d="M3 1.713a.7.7 0 0 1 1.05-.607l10.89 6.288a.7.7 0 0 1 0 1.212L4.05 14.894A.7.7 0 0 1 3 14.288V1.713z"/>
+                        </svg>
+                        <svg class="pause-icon" width="16" height="16" viewBox="0 0 16 16" style="display: none;">
+                            <path d="M2.7 1a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7H2.7zm8 0a.7.7 0 0 0-.7.7v12.6a.7.7 0 0 0 .7.7h2.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-2.6z"/>
+                        </svg>
+                    </button>
+                    <button class="control-btn" id="nextBtn" title="Следующий">
+                        <svg width="16" height="16" viewBox="0 0 16 16">
+                            <path d="M12.7 1a.7.7 0 0 0-.7.7v5.15L2.05 1.107A.7.7 0 0 0 1 1.712v12.575a.7.7 0 0 0 1.05.607L12 9.149V14.3a.7.7 0 0 0 .7.7h1.6a.7.7 0 0 0 .7-.7V1.7a.7.7 0 0 0-.7-.7h-1.6z"/>
+                        </svg>
+                    </button>
+                    <button class="control-btn" id="repeatBtn" title="Повтор">
+                        <svg width="16" height="16" viewBox="0 0 16 16">
+                            <path d="M0 4.75A3.75 3.75 0 0 1 3.75 1h8.5A3.75 3.75 0 0 1 16 4.75v5a3.75 3.75 0 0 1-3.75 3.75H9.81l1.018 1.018a.75.75 0 1 1-1.06 1.06L6.939 12.75l2.829-2.828a.75.75 0 1 1 1.06 1.06L9.811 12h2.439a2.25 2.25 0 0 0 2.25-2.25v-5a2.25 2.25 0 0 0-2.25-2.25h-8.5A2.25 2.25 0 0 0 1.5 4.75v5A2.25 2.25 0 0 0 3.75 12H5v1.5H3.75A3.75 3.75 0 0 1 0 9.75v-5z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="volume-control">
+                    <button class="control-btn" id="volumeBtn" title="Громкость">
+                        <svg class="volume-high" width="16" height="16" viewBox="0 0 16 16">
+                            <path d="M9.741.85a.75.75 0 0 1 .375.65v13a.75.75 0 0 1-1.125.65l-6.925-4a3.642 3.642 0 0 1-1.33-4.967 3.639 3.639 0 0 1 1.33-1.332l6.925-4a.75.75 0 0 1 .75 0zm-6.924 5.3a2.139 2.139 0 0 0 0 3.7l5.8 3.35V2.8l-5.8 3.35zm8.683 4.29V5.56a2.75 2.75 0 0 1 0 4.88z"/>
+                            <path d="M11.5 13.614a5.752 5.752 0 0 0 0-11.228v1.55a4.252 4.252 0 0 1 0 8.127v1.55z"/>
+                        </svg>
+                        <svg class="volume-mute" width="16" height="16" viewBox="0 0 16 16" style="display: none;">
+                            <path d="M13.86 5.47a.75.75 0 0 0-1.061 0l-1.47 1.47-1.47-1.47A.75.75 0 0 0 8.8 6.53L10.269 8l-1.47 1.47a.75.75 0 1 0 1.06 1.06l1.47-1.47 1.47 1.47a.75.75 0 0 0 1.06-1.06L12.39 8l1.47-1.47a.75.75 0 0 0 0-1.06z"/>
+                            <path d="M10.116 1.5A.75.75 0 0 0 8.991.85l-6.925 4a3.642 3.642 0 0 0-1.33 4.967 3.639 3.639 0 0 0 1.33 1.332l6.925 4a.75.75 0 0 0 1.125-.649v-1.906a4.73 4.73 0 0 1-1.5-.694v1.3L2.817 9.852a2.141 2.141 0 0 1-.815-2.852 2.14 2.14 0 0 1 .815-.815l5.8-3.35v1.3c.45-.313.956-.55 1.5-.694V1.5z"/>
+                        </svg>
+                    </button>
+                    <div class="volume-slider-container">
+                        <input type="range" id="volumeSlider" class="volume-slider" min="0" max="100" value="50">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="playlist">
+                <div class="playlist-header">
+                    <span>#</span>
+                    <span>Название трека</span>
+                    <span>Длительность</span>
+                </div>
+                <div class="tracks-list" id="tracksList">
+                    <!-- Треки будут добавлены через JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+      <!-- Gallery Section -->
+<section id="gallery" class="section gallery-section dark-section">
+    <div class="container">
+        <h2 class="section-title text-center">Галерея</h2>
+        <div class="gallery-slider">
+            <div class="slides-container">
+                <div class="slide">
+                    <img src="assets/gallery/photo1.jfif" alt="Chase Atlantic Concert" class="slide-image">
+                    <div class="slide-caption">Концерт в Лос-Анджелесе 2023</div>
+                </div>
+                <div class="slide">
+                    <img src="assets/gallery/photo2.jpg" alt="Studio Session" class="slide-image">
+                    <div class="slide-caption">Студийная работа</div>
+                </div>
+                <div class="slide">
+                    <img src="assets/gallery/photo3.jpg" alt="Live Performance" class="slide-image">
+                    <div class="slide-caption">Живое выступление</div>
+                </div>
+                <div class="slide">
+                    <img src="assets/gallery/photo4.jpg" alt="Band Members" class="slide-image">
+                    <div class="slide-caption">Участники группы</div>
+                </div>
+            </div>
+            <div class="slider-controls">
+                <button class="slider-btn prev-btn">‹</button>
+                <div class="slider-pagination">
+                    <span class="current-slide">1</span> / <span class="total-slides">4</span>
+                    <div class="pagination-dots"></div>
+                </div>
+                <button class="slider-btn next-btn">›</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+        <!-- Discography Section -->
+        <section id="discography" class="section discography-section">
+            <div class="container">
+                <h2 class="section-title text-center">Дискография</h2>
+                <div class="table-responsive">
+                    <table class="discography-table">
+                        <thead>
+                            <tr>
+                                <th>Альбом</th>
+                                <th>Год</th>
+                                <th>Тип</th>
+                                <th>Треков</th>
+                                <th>Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <strong>Beauty In Death</strong>
+                                    <div class="album-details">Deluxe Edition</div>
+                                </td>
+                                <td>2021</td>
+                                <td>Студийный альбом</td>
+                                <td>16</td>
+                                <td><span class="status-badge platinum">Платиновый</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Phases</strong>
+                                </td>
+                                <td>2019</td>
+                                <td>Студийный альбом</td>
+                                <td>13</td>
+                                <td><span class="status-badge gold">Золотой</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Chase Atlantic</strong>
+                                </td>
+                                <td>2017</td>
+                                <td>Дебютный альбом</td>
+                                <td>12</td>
+                                <td><span class="status-badge gold">Золотой</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Part Three</strong>
+                                    <div class="album-details">EP</div>
+                                </td>
+                                <td>2018</td>
+                                <td>Мини-альбом</td>
+                                <td>6</td>
+                                <td><span class="status-badge">Выпущен</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Form Section -->
+        <section id="contact" class="section contact-section dark-section">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <h2 class="section-title text-center">Свяжитесь с нами</h2>
+                        <form id="main-contact-form" class="contact-form">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="name">Имя *</label>
+                                        <input type="text" id="name" name="name" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="email">Email *</label>
+                                        <input type="email" id="email" name="email" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="subject">Тема</label>
+                                <input type="text" id="subject" name="subject">
+                            </div>
+                            <div class="form-group">
+                                <label for="message">Сообщение *</label>
+                                <textarea id="message" name="message" rows="5" required></textarea>
+                            </div>
+                            <button type="submit" class="submit-btn">
+                                <span class="btn-text">Отправить сообщение</span>
+                                <div class="btn-loading d-none">
+                                    <div class="spinner"></div>
+                                    Отправка...
+                                </div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="footer-brand">
+                        <img src="assets/logo.png" alt="Chase Atlantic" class="footer-logo">
+                        <span class="footer-brand-text">CHASE ATLANTIC</span>
+                    </div>
+                    <p class="footer-text">
+                        Официальный фанатский сайт. Мы не связаны с официальными представителями группы.
+                    </p>
+                </div>
+                <div class="col-lg-4">
+                    <h4 class="footer-title">Быстрые ссылки</h4>
+                    <ul class="footer-links">
+                        <li><a href="#home">Главная</a></li>
+                        <li><a href="#music">Музыка</a></li>
+                        <li><a href="#gallery">Галерея</a></li>
+                        <li><a href="#contact">Контакты</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4">
+                    <h4 class="footer-title">Социальные сети</h4>
+                    <div class="social-links">
+                        <a href="https://music.yandex.by/artist/4832983/tracks" class="social-link">Yandex music</a>
+                        <a href="#" class="social-link">YouTube</a>
+                        <a href="#" class="social-link">Instagram</a>
+                        <a href="#" class="social-link">Twitter</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Chase Atlantic Fan Site.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Contact Modal -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Связь с нами</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="modal-contact-form" class="contact-form">
+                    <div class="form-group">
+                        <label for="modal-name">Имя *</label>
+                        <input type="text" id="modal-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="modal-email">Email *</label>
+                        <input type="email" id="modal-email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="modal-phone">Телефон</label>
+                        <input type="tel" id="modal-phone" name="phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="modal-message">Сообщение *</label>
+                        <textarea id="modal-message" name="message" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">
+                        <span class="btn-text">Отправить</span>
+                        <div class="btn-loading d-none">
+                            <div class="spinner"></div>
+                            Отправка...
+                        </div>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    
+    <script src="js/main.js"></script>
+    <script src="js/gallery.js"></script>
+    <script src="js/modal.js"></script>
+    <script src="js/form-handler.js"></script>
+    <script src="js/music-player.js"></script>
+</body>
+</html>
