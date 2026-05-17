@@ -3,7 +3,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 header('Content-Type: application/json; charset=UTF-8');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, GET, PUT, OPTIONS');
+header('Access-Control-Allow-Methods: GET, POST, PUT, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -14,11 +14,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once 'config.php';
 session_start();
 
-$method = $_SERVER['REQUEST_METHOD'];
-$input = json_decode(file_get_contents('php://input'), true);
-if (!$input && $_POST) $input = $_POST;
+// Получаем action из GET
+$action = $_GET['action'] ?? '';
 
-$action = $input['action'] ?? $_GET['action'] ?? '';
+// Если это POST, но сервер не принимает тело – берём данные из $_POST или из GET-параметра 'data'
+$input = [];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Пытаемся прочитать JSON из тела
+    $raw = file_get_contents('php://input');
+    if ($raw) {
+        $input = json_decode($raw, true);
+    }
+    if (!$input && !empty($_POST)) {
+        $input = $_POST;
+    }
+    // Если всё ещё пусто – пробуем взять из GET-параметра 'data' (URL-encoded JSON)
+    if (!$input && isset($_GET['data'])) {
+        $input = json_decode(urldecode($_GET['data']), true);
+    }
+} else {
+    // Для GET-запросов данные могут быть в GET
+    $input = $_GET;
+}
 
 $pdo = getDB();
 
@@ -36,8 +53,8 @@ function generate_password($length = 10) {
     return substr(str_shuffle($chars), 0, $length);
 }
 
-// Регистрация
-if ($method === 'POST' && $action === 'register') {
+// Регистрация (можно через GET или POST)
+if ($action === 'register') {
     $full_name = trim($input['full_name'] ?? '');
     $email = trim($input['email'] ?? '');
     $phone = trim($input['phone'] ?? '');
@@ -86,7 +103,7 @@ if ($method === 'POST' && $action === 'register') {
 }
 
 // Вход
-if ($method === 'POST' && $action === 'login') {
+if ($action === 'login') {
     $login = trim($input['login'] ?? '');
     $password = $input['password'] ?? '';
     if (empty($login) || empty($password)) {
@@ -108,9 +125,8 @@ if ($method === 'POST' && $action === 'login') {
 }
 
 // Проверка авторизации
-$user_id = $_SESSION['fan_user_id'] ?? null;
-
-if ($method === 'GET' && $action === 'profile') {
+if ($action === 'profile') {
+    $user_id = $_SESSION['fan_user_id'] ?? null;
     if (!$user_id) {
         http_response_code(401);
         echo json_encode(['error' => 'Не авторизован']);
@@ -129,7 +145,8 @@ if ($method === 'GET' && $action === 'profile') {
     exit;
 }
 
-// Далее только для авторизованных
+// Далее все действия требуют авторизации
+$user_id = $_SESSION['fan_user_id'] ?? null;
 if (!$user_id) {
     http_response_code(401);
     echo json_encode(['error' => 'Требуется авторизация']);
@@ -137,7 +154,7 @@ if (!$user_id) {
 }
 
 // Отправка сообщения
-if ($method === 'POST' && $action === 'message') {
+if ($action === 'message') {
     $subject = trim($input['subject'] ?? '');
     $message = trim($input['message'] ?? '');
     $privacy = isset($input['privacy']);
@@ -166,7 +183,7 @@ if ($method === 'POST' && $action === 'message') {
 }
 
 // Редактирование сообщения
-if ($method === 'PUT' && $action === 'update_message') {
+if ($action === 'update_message') {
     $message_id = (int)($input['id'] ?? 0);
     $subject = trim($input['subject'] ?? '');
     $message = trim($input['message'] ?? '');
@@ -199,7 +216,7 @@ if ($method === 'PUT' && $action === 'update_message') {
 }
 
 // Оформление заказа
-if ($method === 'POST' && $action === 'order') {
+if ($action === 'order') {
     $items = $input['items'] ?? [];
     $total = (float)($input['total'] ?? 0);
     if (empty($items) || $total <= 0) {

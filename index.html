@@ -541,36 +541,29 @@
         const pendingMessage = localStorage.getItem('pending_message');
         const pendingOrder = localStorage.getItem('pending_order');
         if (!pendingMessage && !pendingOrder) return;
+
         try {
-            const res = await fetch(API_BASE, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'profile' })
-            });
-            if (res.ok) {
+            // Проверяем авторизацию через GET-запрос к api.php?action=profile
+            const authRes = await fetch(API_BASE + '?action=profile', { method: 'GET' });
+            if (authRes.ok) {
+                // Авторизованы – отправляем отложенные данные
                 if (pendingMessage) {
                     const data = JSON.parse(pendingMessage);
-                    await fetch(API_BASE, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data)
-                    });
+                    await fetch(API_BASE + '?action=message&data=' + encodeURIComponent(JSON.stringify(data)), { method: 'GET' });
                     localStorage.removeItem('pending_message');
-                    alert('Ваше сообщение было отправлено автоматически!');
+                    alert('✅ Ваше сообщение было отправлено автоматически!');
                 }
                 if (pendingOrder) {
                     const data = JSON.parse(pendingOrder);
-                    await fetch(API_BASE, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ action: 'order', items: data.items, total: data.total })
-                    });
+                    await fetch(API_BASE + '?action=order&data=' + encodeURIComponent(JSON.stringify({ items: data.items, total: data.total })), { method: 'GET' });
                     localStorage.removeItem('pending_order');
-                    alert('Ваш заказ был оформлен автоматически!');
-                    location.reload();
+                    alert('✅ Ваш заказ был оформлен автоматически!');
+                    location.reload(); // обновляем корзину
                 }
             }
-        } catch(e) { console.error('processPending error:', e); }
+        } catch (e) {
+            console.error('processPending error:', e);
+        }
     })();
 </script>
 </body>

@@ -399,11 +399,8 @@ checkoutBtn.addEventListener('click', async () => {
     checkoutBtn.disabled = true;
 
     try {
-        const response = await fetch(API_BASE, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'order', items: itemsForOrder, total: totalAmount })
-        });
+       const url = API_BASE + '?action=order&data=' + encodeURIComponent(JSON.stringify({ items: itemsForOrder, total: totalAmount }));
+        const response = await fetch(url, { method: 'GET' });
         const data = await response.json();
         if (response.ok) {
             alert(`Заказ оформлен! Номер заказа: ${data.order_id}`);
