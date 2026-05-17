@@ -412,22 +412,7 @@
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
                         <h2 class="section-title text-center">Свяжитесь с нами</h2>
-                        <form id="main-contact-form" class="contact-form" method="post" action="api.php">
-                            <input type="hidden" name="resource" value="messages">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="name">Имя *</label>
-                                        <input type="text" id="name" name="name" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="email">Email *</label>
-                                        <input type="email" id="email" name="email" required>
-                                    </div>
-                                </div>
-                            </div>
+                       <form id="main-contact-form" class="contact-form">
                             <div class="form-group">
                                 <label for="subject">Тема</label>
                                 <input type="text" id="subject" name="subject">
@@ -436,8 +421,6 @@
                                 <label for="message">Сообщение *</label>
                                 <textarea id="message" name="message" rows="5" required></textarea>
                             </div>
-                            
-                            <!-- Чекбокс согласия -->
                             <div class="form-group checkbox-group">
                                 <label class="checkbox-label">
                                     <input type="checkbox" id="main-privacy" name="privacy" required>
@@ -448,7 +431,6 @@
                                     Необходимо согласиться с обработкой персональных данных
                                 </div>
                             </div>
-                            
                             <button type="submit" class="submit-btn">
                                 <span class="btn-text">Отправить сообщение</span>
                                 <div class="btn-loading d-none">
@@ -508,26 +490,15 @@
                 <button class="modal-close" id="modalClose">&times;</button>
             </div>
             <div class="modal-body">
-                <form id="modal-contact-form" class="contact-form" method="post" action="api.php">
-                    <input type="hidden" name="resource" value="messages">
+               <form id="modal-contact-form" class="contact-form">
                     <div class="form-group">
-                        <label for="modal-name">Имя *</label>
-                        <input type="text" id="modal-name" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="modal-email">Email *</label>
-                        <input type="email" id="modal-email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="modal-phone">Телефон</label>
-                        <input type="tel" id="modal-phone" name="phone">
+                        <label for="modal-subject">Тема</label>
+                        <input type="text" id="modal-subject" name="subject">
                     </div>
                     <div class="form-group">
                         <label for="modal-message">Сообщение *</label>
                         <textarea id="modal-message" name="message" rows="4" required></textarea>
                     </div>
-                    
-                    <!-- Чекбокс согласия в модальном окне -->
                     <div class="form-group checkbox-group">
                         <label class="checkbox-label">
                             <input type="checkbox" id="modal-privacy" name="privacy" required>
@@ -538,7 +509,6 @@
                             Необходимо согласиться с обработкой персональных данных
                         </div>
                     </div>
-                    
                     <button type="submit" class="submit-btn">
                         <span class="btn-text">Отправить</span>
                         <div class="btn-loading d-none">
@@ -562,5 +532,46 @@
     <script src="js/form-handler.js"></script>
     <script src="js/music-player.js"></script>
     <script src="js/calculator.js"></script>
+
+    <script>
+    // Проверка отложенных сообщений/заказов после авторизации
+    (async function processPending() {
+        const pendingMessage = localStorage.getItem('pending_message');
+        const pendingOrder = localStorage.getItem('pending_order');
+        if (!pendingMessage && !pendingOrder) return;
+
+        // Проверяем авторизацию
+        try {
+            const res = await fetch('/api.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'profile' })
+            });
+            if (res.ok) {
+                if (pendingMessage) {
+                    const data = JSON.parse(pendingMessage);
+                    const sendRes = await fetch('/api.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    if (sendRes.ok) alert('Ваше сообщение было отправлено автоматически!');
+                    localStorage.removeItem('pending_message');
+                }
+                if (pendingOrder) {
+                    const data = JSON.parse(pendingOrder);
+                    const sendRes = await fetch('/api.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'order', items: data.items, total: data.total })
+                    });
+                    if (sendRes.ok) alert('Ваш заказ был оформлен автоматически!');
+                    localStorage.removeItem('pending_order');
+                    location.reload(); // обновим корзину
+                }
+            }
+        } catch(e) { console.error(e); }
+    })();
+</script>
 </body>
 </html>

@@ -365,28 +365,37 @@ checkoutBtn.addEventListener('click', async () => {
         alert('Добавьте товары в корзину перед оформлением заказа!');
         return;
     }
-    // Проверяем, авторизован ли пользователь (через сессию, можно сделать запрос к /api/profile)
-    try {
-        const profileRes = await fetch('/api/profile');
-        if (!profileRes.ok) {
-            alert('Для оформления заказа необходимо войти в личный кабинет.\nПерейдите на страницу входа.');
-            window.location.href = 'fan_login.php';
-            return;
-        }
-    } catch(e) {
-        alert('Ошибка проверки авторизации. Пожалуйста, войдите.');
-        window.location.href = 'fan_login.php';
+
+    // Проверка авторизации
+    async function checkAuth() {
+        try {
+            const res = await fetch('/api.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'profile' })
+            });
+            return res.ok;
+        } catch(e) { return false; }
+    }
+
+    const isAuth = await checkAuth();
+    if (!isAuth) {
+        // Сохраняем корзину в localStorage
+        localStorage.setItem('pending_order', JSON.stringify({
+            items: cart.map(item => {
+                const merch = merchItems.find(m => m.id === item.id);
+                return { id: item.id, name: merch.name, quantity: item.quantity, price: merch.price };
+            }),
+            total: parseFloat(total.textContent.replace(/\D/g, ''))
+        }));
+        window.location.href = 'fan_login.php?redirect=' + encodeURIComponent(window.location.href);
         return;
     }
 
+    // Авторизован – отправляем заказ
     const itemsForOrder = cart.map(item => {
         const merch = merchItems.find(m => m.id === item.id);
-        return {
-            id: item.id,
-            name: merch.name,
-            quantity: item.quantity,
-            price: merch.price
-        };
+        return { id: item.id, name: merch.name, quantity: item.quantity, price: merch.price };
     });
     const totalAmount = parseFloat(total.textContent.replace(/\D/g, ''));
 
@@ -394,15 +403,14 @@ checkoutBtn.addEventListener('click', async () => {
     checkoutBtn.disabled = true;
 
     try {
-        const response = await fetch('/api/orders', {
+        const response = await fetch('/api.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ items: itemsForOrder, total: totalAmount })
+            body: JSON.stringify({ action: 'order', items: itemsForOrder, total: totalAmount })
         });
         const data = await response.json();
         if (response.ok) {
             alert(`Заказ оформлен! Номер заказа: ${data.order_id}`);
-            // Очистка корзины
             cart = [];
             appliedPromo = null;
             freeShippingToggle.checked = false;
