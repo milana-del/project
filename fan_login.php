@@ -226,8 +226,8 @@ function generate_password($length = 10) {
             </div>
         <?php endif; ?>
 
-        <div class="back-link">
-            <a href="index.html">← Вернуться на главную</a>
+        <div class="mt-4">
+            <a href="index.html" class="back-link">← Вернуться на главную</a>
         </div>
     </div>
 </div>
