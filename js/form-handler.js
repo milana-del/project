@@ -1,17 +1,16 @@
-// Обработка формы связи – только для авторизованных
+// form-handler.js
 document.addEventListener('DOMContentLoaded', () => {
     const mainForm = document.getElementById('main-contact-form');
     const modalForm = document.getElementById('modal-contact-form');
 
     async function checkAuth() {
         try {
-            const res = await fetch('/api.php', {
+            const res = await fetch(API_BASE, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action: 'profile' })
             });
-            if (res.ok) return true;
-            return false;
+            return res.ok;
         } catch(e) {
             return false;
         }
@@ -26,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnLoading.classList.remove('d-none');
 
         try {
-            const res = await fetch('/api.php', {
+            const res = await fetch(API_BASE, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
@@ -58,14 +57,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function handleFormSubmit(e, form) {
         e.preventDefault();
-        // Проверяем согласие
         const privacy = form.querySelector('input[name="privacy"]');
         if (privacy && !privacy.checked) {
             const errorDiv = form.querySelector('.field-error');
             if (errorDiv) errorDiv.style.display = 'block';
             return;
         }
-        // Собираем данные: subject, message, privacy
         const subject = form.querySelector('[name="subject"]')?.value || '';
         const message = form.querySelector('[name="message"]')?.value || '';
         const data = {

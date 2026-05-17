@@ -1,4 +1,10 @@
-// Calculator for Chase Atlantic Merch
+if (typeof API_BASE === 'undefined') {
+    var API_BASE = (() => {
+        const path = window.location.pathname;
+        if (path.includes('/project/')) return '/project/api.php';
+        return '/api.php';
+    })();
+}
 document.addEventListener('DOMContentLoaded', function() {
     // Merch data
     const merchItems = [
@@ -366,10 +372,9 @@ checkoutBtn.addEventListener('click', async () => {
         return;
     }
 
-    // Проверка авторизации
     async function checkAuth() {
         try {
-            const res = await fetch('/api.php', {
+            const res = await fetch(API_BASE, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ action: 'profile' })
@@ -380,7 +385,6 @@ checkoutBtn.addEventListener('click', async () => {
 
     const isAuth = await checkAuth();
     if (!isAuth) {
-        // Сохраняем корзину в localStorage
         localStorage.setItem('pending_order', JSON.stringify({
             items: cart.map(item => {
                 const merch = merchItems.find(m => m.id === item.id);
@@ -392,7 +396,6 @@ checkoutBtn.addEventListener('click', async () => {
         return;
     }
 
-    // Авторизован – отправляем заказ
     const itemsForOrder = cart.map(item => {
         const merch = merchItems.find(m => m.id === item.id);
         return { id: item.id, name: merch.name, quantity: item.quantity, price: merch.price };
@@ -403,7 +406,7 @@ checkoutBtn.addEventListener('click', async () => {
     checkoutBtn.disabled = true;
 
     try {
-        const response = await fetch('/api.php', {
+        const response = await fetch(API_BASE, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: 'order', items: itemsForOrder, total: totalAmount })
