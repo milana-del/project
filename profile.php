@@ -10,15 +10,12 @@ if (!isset($_SESSION['fan_user_id'])) {
 $pdo = getDB();
 $user_id = $_SESSION['fan_user_id'];
 
-// Выход
 if (isset($_GET['logout'])) {
     session_destroy();
     header('Location: index.html');
     exit;
 }
 
-// Загружаем данные пользователя, сообщения и заказы через API (или напрямую)
-// Для простоты используем прямой запрос к БД, но можно и через cURL к api.php
 $stmt = $pdo->prepare("SELECT id, login, full_name, email, phone, created_at FROM fan_users WHERE id = ?");
 $stmt->execute([$user_id]);
 $user = $stmt->fetch();
@@ -79,6 +76,13 @@ foreach ($orders as &$order) {
             cursor: pointer;
             font-size: 0.9rem;
         }
+        .admin-reply {
+            background: rgba(76,175,80,0.1);
+            padding: 10px;
+            border-left: 3px solid #4caf50;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
         .modal-edit {
             display: none;
             position: fixed;
@@ -131,7 +135,7 @@ foreach ($orders as &$order) {
                     <div class="date"><?= date('d.m.Y H:i', strtotime($msg['created_at'])) ?></div>
                     <div class="message-text mt-2"><?= nl2br(htmlspecialchars($msg['message'])) ?></div>
                     <?php if (!empty($msg['admin_reply'])): ?>
-                        <div class="admin-reply mt-2" style="background: rgba(76,175,80,0.1); padding: 10px; border-left: 3px solid #4caf50; border-radius: 8px;">
+                        <div class="admin-reply">
                             <strong>📎 Ответ от поддержки:</strong><br>
                             <?= nl2br(htmlspecialchars($msg['admin_reply'])) ?><br>
                             <small><?= date('d.m.Y H:i', strtotime($msg['reply_date'])) ?></small>
@@ -188,6 +192,15 @@ foreach ($orders as &$order) {
 </div>
 
 <script>
+    // Определяем API_BASE аналогично config.js
+    const API_BASE = (() => {
+        const path = window.location.pathname;
+        if (path.includes('/project/')) {
+            return '/project/api.php';
+        }
+        return '/api.php';
+    })();
+
     let currentMessageId = null;
     function openEditModal(id, subject, message) {
         currentMessageId = id;
@@ -205,21 +218,21 @@ foreach ($orders as &$order) {
         const id = document.getElementById('editId').value;
         const subject = document.getElementById('editSubject').value;
         const message = document.getElementById('editMessage').value;
+        
+        const data = { id: id, subject: subject, message: message };
+        const url = API_BASE + '?action=update_message&data=' + encodeURIComponent(JSON.stringify(data));
+        
         try {
-            const res = await fetch('/api/messages/' + id, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ subject, message })
-            });
-            const data = await res.json();
+            const res = await fetch(url, { method: 'GET' });
+            const result = await res.json();
             if (res.ok) {
                 alert('Сообщение обновлено!');
                 location.reload();
             } else {
-                alert('Ошибка: ' + (data.error || data.errors?.message || 'Не удалось обновить'));
+                alert('Ошибка: ' + (result.error || result.errors?.message || 'Не удалось обновить'));
             }
         } catch (err) {
-            alert('Ошибка сети');
+            alert('Ошибка сети: ' + err.message);
         }
         closeEditModal();
     });
