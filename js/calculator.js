@@ -367,11 +367,7 @@ checkoutBtn.addEventListener('click', async () => {
 
     async function checkAuth() {
         try {
-            const res = await fetch(API_BASE, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'profile' })
-            });
+            const res = await fetch(API_BASE + '?action=profile', { method: 'GET' });
             return res.ok;
         } catch(e) { return false; }
     }
@@ -399,7 +395,7 @@ checkoutBtn.addEventListener('click', async () => {
     checkoutBtn.disabled = true;
 
     try {
-       const url = API_BASE + '?action=order&data=' + encodeURIComponent(JSON.stringify({ items: itemsForOrder, total: totalAmount }));
+        const url = API_BASE + '?action=order&data=' + encodeURIComponent(JSON.stringify({ items: itemsForOrder, total: totalAmount }));
         const response = await fetch(url, { method: 'GET' });
         const data = await response.json();
         if (response.ok) {

@@ -6,11 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!mainForm && !modalForm) return;
 
     async function checkAuth() {
-    try {
-        const res = await fetch(API_BASE + '?action=profile', { method: 'GET' });
-        return res.ok;
-    } catch(e) { return false; }
-}
+        try {
+            const res = await fetch(API_BASE + '?action=profile', { method: 'GET' });
+            return res.ok;
+        } catch(e) {
+            return false;
+        }
+    }
 
     async function sendMessage(formData, formElement) {
         const submitBtn = formElement.querySelector('.submit-btn');
@@ -22,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btnLoading) btnLoading.classList.remove('d-none');
 
         try {
-             const url = API_BASE + '?action=message&data=' + encodeURIComponent(JSON.stringify(formData));
+            const url = API_BASE + '?action=message&data=' + encodeURIComponent(JSON.stringify(formData));
             const res = await fetch(url, { method: 'GET' });
             const data = await res.json();
             if (res.ok) {

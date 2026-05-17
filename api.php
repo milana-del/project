@@ -14,13 +14,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once 'config.php';
 session_start();
 
-// Получаем action из GET
+// Получаем action
 $action = $_GET['action'] ?? '';
 
-// Если это POST, но сервер не принимает тело – берём данные из $_POST или из GET-параметра 'data'
+// Инициализируем входные данные
 $input = [];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Пытаемся прочитать JSON из тела
+    // Попытка прочитать JSON из тела
     $raw = file_get_contents('php://input');
     if ($raw) {
         $input = json_decode($raw, true);
@@ -28,13 +29,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$input && !empty($_POST)) {
         $input = $_POST;
     }
-    // Если всё ещё пусто – пробуем взять из GET-параметра 'data' (URL-encoded JSON)
-    if (!$input && isset($_GET['data'])) {
-        $input = json_decode(urldecode($_GET['data']), true);
-    }
 } else {
-    // Для GET-запросов данные могут быть в GET
-    $input = $_GET;
+    // GET-запрос: данные могут быть в параметре data (JSON) или в обычных GET-параметрах
+    if (isset($_GET['data'])) {
+        $data_json = urldecode($_GET['data']);
+        $input = json_decode($data_json, true);
+        if (!is_array($input)) {
+            $input = [];
+        }
+    }
+    // Также добавим остальные GET-параметры (кроме action и data)
+    foreach ($_GET as $key => $val) {
+        if ($key !== 'action' && $key !== 'data') {
+            $input[$key] = $val;
+        }
+    }
 }
 
 $pdo = getDB();
@@ -53,7 +62,7 @@ function generate_password($length = 10) {
     return substr(str_shuffle($chars), 0, $length);
 }
 
-// Регистрация (можно через GET или POST)
+// Регистрация (может быть POST или GET с данными)
 if ($action === 'register') {
     $full_name = trim($input['full_name'] ?? '');
     $email = trim($input['email'] ?? '');
@@ -157,7 +166,7 @@ if (!$user_id) {
 if ($action === 'message') {
     $subject = trim($input['subject'] ?? '');
     $message = trim($input['message'] ?? '');
-    $privacy = isset($input['privacy']);
+    $privacy = isset($input['privacy']) ? (bool)$input['privacy'] : false;
 
     $errors = [];
     if (strlen($subject) > 255) $errors['subject'] = 'Тема не более 255 символов.';
