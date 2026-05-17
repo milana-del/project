@@ -108,6 +108,8 @@ foreach ($orders as &$order) {
             margin-top: 20px;
             color: #ff6b6b;
         }
+         .back-link { background: #333; padding: 8px 20px; border-radius: 30px; color: white; text-decoration: none; }
+        .back-link:hover { background: var(--primary-color); color: white; }
     </style>
 </head>
 <body>
