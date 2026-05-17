@@ -154,7 +154,9 @@ function generate_password($length = 10) {
             text-align: center;
         }
         .back-link { margin-top: 20px; text-align: center; }
-        .back-link a { color: var(--primary-color); text-decoration: none; }
+        
+        .back-link { background: #333; padding: 8px 20px; border-radius: 30px; color: white; text-decoration: none; }
+        .back-link:hover { background: var(--primary-color); color: white; }
         .error-message { background: rgba(244,67,54,0.2); color: #f44336; padding: 10px; border-radius: 10px; margin-bottom: 20px; }
     </style>
 </head>
