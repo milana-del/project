@@ -28,7 +28,7 @@ if (!$user) {
     exit;
 }
 
-$stmt = $pdo->prepare("SELECT id, subject, message, created_at, updated_at FROM fan_messages WHERE user_id = ? ORDER BY created_at DESC");
+$stmt = $pdo->prepare("SELECT id, subject, message, admin_reply, reply_date, created_at, updated_at FROM fan_messages WHERE user_id = ? ORDER BY created_at DESC");
 $stmt->execute([$user_id]);
 $messages = $stmt->fetchAll();
 
@@ -130,6 +130,13 @@ foreach ($orders as &$order) {
                     </div>
                     <div class="date"><?= date('d.m.Y H:i', strtotime($msg['created_at'])) ?></div>
                     <div class="message-text mt-2"><?= nl2br(htmlspecialchars($msg['message'])) ?></div>
+                    <?php if (!empty($msg['admin_reply'])): ?>
+                        <div class="admin-reply mt-2" style="background: rgba(76,175,80,0.1); padding: 10px; border-left: 3px solid #4caf50; border-radius: 8px;">
+                            <strong>📎 Ответ от поддержки:</strong><br>
+                            <?= nl2br(htmlspecialchars($msg['admin_reply'])) ?><br>
+                            <small><?= date('d.m.Y H:i', strtotime($msg['reply_date'])) ?></small>
+                        </div>
+                    <?php endif; ?>
                 </div>
             <?php endforeach; ?>
         <?php endif; ?>
