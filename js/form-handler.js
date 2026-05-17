@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainForm = document.getElementById('main-contact-form');
     const modalForm = document.getElementById('modal-contact-form');
 
+    if (!mainForm && !modalForm) return;
+
     async function checkAuth() {
         try {
             const res = await fetch(API_BASE, {
@@ -18,11 +20,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function sendMessage(formData, formElement) {
         const submitBtn = formElement.querySelector('.submit-btn');
+        if (!submitBtn) return;
         const btnText = submitBtn.querySelector('.btn-text');
         const btnLoading = submitBtn.querySelector('.btn-loading');
         submitBtn.disabled = true;
-        btnText.classList.add('d-none');
-        btnLoading.classList.remove('d-none');
+        if (btnText) btnText.classList.add('d-none');
+        if (btnLoading) btnLoading.classList.remove('d-none');
 
         try {
             const res = await fetch(API_BASE, {
@@ -43,11 +46,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Ошибка: ' + err);
             }
         } catch(e) {
-            alert('Ошибка сети');
+            alert('Ошибка сети. Проверьте соединение.');
+            console.error(e);
         } finally {
             submitBtn.disabled = false;
-            btnText.classList.remove('d-none');
-            btnLoading.classList.add('d-none');
+            if (btnText) btnText.classList.remove('d-none');
+            if (btnLoading) btnLoading.classList.add('d-none');
         }
     }
 

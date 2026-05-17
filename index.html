@@ -531,12 +531,12 @@
     
     <script src="js/main.js"></script>
     <script src="js/gallery.js"></script>
-    <!--<script src="js/modal.js"></script>-->
+    
     <script src="js/form-handler.js"></script>
     <script src="js/music-player.js"></script>
     <script src="js/calculator.js"></script>
 
-    <script>
+   <script>
     (async function processPending() {
         const pendingMessage = localStorage.getItem('pending_message');
         const pendingOrder = localStorage.getItem('pending_order');
@@ -570,7 +570,7 @@
                     location.reload();
                 }
             }
-        } catch(e) { console.error(e); }
+        } catch(e) { console.error('processPending error:', e); }
     })();
 </script>
 </body>
